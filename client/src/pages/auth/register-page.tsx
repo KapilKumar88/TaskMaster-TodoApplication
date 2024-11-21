@@ -46,10 +46,13 @@ export default function RegisterPage() {
         navigate("/login");
         return;
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "error",
-        description: error?.message ?? "Something went wrong. Please try again",
+        title: "Error",
+        description:
+          error?.message ||
+          error?.data.message ||
+          "Something went wrong. Please try again",
       });
     }
   };

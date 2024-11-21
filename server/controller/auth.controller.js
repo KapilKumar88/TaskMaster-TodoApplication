@@ -79,11 +79,11 @@ exports.login = async (req, res, next) => {
 };
 
 /**
- * Description: Register a new user into application
+ * Description: Register user into the application
  * @param {name, email, password} req
  * @param {*} res
  * @param {*} next
- * @return JSON
+ * @returns JSON
  */
 exports.register = async (req, res, next) => {
   try {
@@ -95,25 +95,26 @@ exports.register = async (req, res, next) => {
       password: hash,
     });
 
-    if (user._id) {
-      welcomeEmail({
-        name: user.name,
-        email: user.email,
-      });
-      sendVerificationEmail(user.email, user.name);
+    if (user === null || user?._id === undefined) {
       return sendResponse(
         res,
-        true,
-        200,
-        "Registered Successfully. Please verify your email by clicking on the link sent on your email."
+        false,
+        400,
+        "Something went wrong. Please try again"
       );
     }
+
+    welcomeEmail({
+      name: user.name,
+      email: user.email,
+    });
+    sendVerificationEmail(user.email, user.name);
 
     return sendResponse(
       res,
       true,
-      400,
-      "Something went wrong. Please try again"
+      200,
+      "Registered Successfully. Please verify your email by clicking on the link sent on your email."
     );
   } catch (error) {
     next(error);
