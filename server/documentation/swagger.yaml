@@ -1,0 +1,1047 @@
+openapi: 3.0.0
+info:
+  description: ""
+  version: "1.0.0"
+  title: "TODO APP"
+servers:
+  - url: http://localhost:3000/api
+    description: local URL
+tags:
+  - name: "Authentication"
+    description: "Authentication related API's like login, register, etc"
+  - name: "Task"
+    description: "Task CRUD API's"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /register:
+    post:
+      summary: Register API
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - name
+                - email
+                - password
+                - confirm_password
+              properties:
+                name:
+                  type: "string"
+                  example: "John"
+                email:
+                  type: "string"
+                  example: "john@example.com"
+                password:
+                  type: "string"
+                  example: "TT^&4675884"
+                confirm_password:
+                  type: "string"
+                  example: "TT^&4675884"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: true
+                statusCode: 200
+                message: "Registered Successfully"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: '"name" is not allowed to be empty'
+        500:
+          $ref: "#/components/responses/500Res"
+  /login:
+    post:
+      summary: Login API
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: "string"
+                  example: "john@example.com"
+                password:
+                  type: "string"
+                  example: "TT ^&4675884"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+                      tokenExpireAt:
+                        type: number
+                      refreshTokenExpireAt:
+                        type: number
+                      refreshToken:
+                        type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Login Successfully"
+                data:
+                  token: "Randon string"
+                  tokenExpireAt: 1659173406
+                  refreshToken: "Randon string"
+                  refreshTokenExpireAt: 1661763606
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: '"email" is not allowed to be empty'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /refreshToken:
+    post:
+      summary: Refresh Token API
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - token
+              properties:
+                token:
+                  type: "string"
+                  example: "Random string"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Access token retrived successfully."
+                data:
+                  token: "Randon string"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /resend-email-verification:
+    post:
+      summary: Resend Email verification instructions
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - email
+              properties:
+                email:
+                  type: "string"
+                  example: "example.com"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Instruction send successfully."
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /verify-email:
+    post:
+      summary: Verify your email
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - token
+              properties:
+                token:
+                  type: "token"
+                  example: "Random string"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Email verified successfully"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /task/create:
+    post:
+      summary: Create a Task
+      tags: [Task]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - name
+                - description
+              properties:
+                name:
+                  type: "string"
+                  example: "First Task"
+                description:
+                  type: "string"
+                  example: "Task Description"
+                status:
+                  type: "string"
+                  example: "todo"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true
+                statusCode: 201
+                message: "Task created successfully"
+                data:
+                  name: "First Task"
+                  description: "Task Description"
+                  status: "todo"
+                  userId: "62e2b992d0ba1d28f6b3debe"
+                  _id: "62e4d99186f0d10ced93df13"
+                  createdAt: "2022-07-30T07:11:13.913Z"
+                  updatedAt: "2022-07-30T07:11:13.913Z"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: "Validation Error"
+                data:
+                  message: '"status" must be one of [in-progress, done, todo]'
+                  field: "status"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /task/update/{id}:
+    put:
+      summary: Update a Task
+      tags: [Task]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            required: true
+            description: Id of the task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - name
+                - description
+              properties:
+                name:
+                  type: "string"
+                  example: "Update Task"
+                description:
+                  type: "string"
+                  example: "Update Description"
+                status:
+                  type: "string"
+                  example: "ready"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Task updated successfully"
+                data:
+                  name: "First Task"
+                  description: "Task Description"
+                  status: "todo"
+                  userId: "62e2b992d0ba1d28f6b3debe"
+                  _id: "62e4d99186f0d10ced93df13"
+                  createdAt: "2022-07-30T07:11:13.913Z"
+                  updatedAt: "2022-07-30T07:11:13.913Z"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: "Validation Error"
+                data:
+                  message: '"status" must be one of [in-progress, done, todo]'
+                  field: "status"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /task/list:
+    get:
+      summary: Fetch list of all My Task
+      tags: [Task]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            required: true
+            description: Number of records needs to be fetched in one request
+        - in: query
+          name: page
+          schema:
+            type: integer
+            required: true
+            description: Page number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: "Task list fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "62e4d99186f0d10ced93df13"
+                        name:
+                          type: string
+                          example: "First Task"
+                        description:
+                          type: string
+                          example: "Task Description"
+                        status:
+                          type: string
+                          example: "todo"
+                        userId:
+                          type: string
+                          example: "62e2b992d0ba1d28f6b3debe"
+                        createdAt:
+                          type: date
+                          example: "2022-07-30T07:11:13.913Z"
+                        updatedAt:
+                          type: date
+                          example: "2022-07-30T07:11:13.913Z"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: "Validation Error"
+                data:
+                  message: '"page" is required'
+                  field: "page"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /task/delete/{id}:
+    delete:
+      summary: Delete a task
+      tags: [Task]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            required: true
+            description: Id of task
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: "Task deleted successfully"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: "Validation Error"
+                data:
+                  message: '"id" is required'
+                  field: "id"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /user-profile:
+    get:
+      summary: Fetch the logged in user details
+      tags: [User]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: "Profile Fetched successfully"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "62e4d99186f0d10ced93df13"
+                        name:
+                          type: string
+                          example: "Robin Ebert"
+                        email:
+                          type: string
+                          example: "Anissa6@yahoo.com"
+                        profileImage:
+                          type: string
+                          example: "http://localhost:3000/images/1732014954_9efce5184251df8dcd2a.jpeg"
+                        emailVerifiedAt:
+                          type: date
+                          example: "2022-07-30T07:11:13.913Z"
+                        notification:
+                          type: object
+                          properties:
+                            emailNotification:
+                              type: boolean
+                              example: true
+                            pushNotification:
+                              type: boolean
+                              example: false
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /update-profile:
+    put:
+      summary: Update the user details
+      tags: [User]
+      consumes:
+        - "multipart/form-data"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                current_password:
+                  type: string
+                  description: The current password of the user.
+                password:
+                  type: string
+                  description: The new password to set.
+                confirm_password:
+                  type: string
+                  description: Confirmation of the new password.
+                name:
+                  type: string
+                  description: The name of the user.
+                profileImage:
+                  type: file
+                  description: The profile image of the user.
+                email_notification:
+                  type: boolean
+                  description: The email notification of the user.
+                push_notification:
+                  type: boolean
+                  description: The push notification of the user.
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: true
+                statusCode: 200
+                message: "Profile updated successfully"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: "Validation Error"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        401:
+          $ref: "#/components/responses/401Res"
+        500:
+          $ref: "#/components/responses/500Res"
+  /dashboard/statistics:
+    get:
+      summary: Fetch the dashboard statistics
+      tags: [Dashboard]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: "Success"
+                  data:
+                    type: object
+                    properties:
+                      totalTask:
+                        type: object
+                        properties:
+                          count:
+                            type: number
+                            example: 1
+                          diffFromLastWeek:
+                            type: number
+                            example: 32
+                      pendingTask:
+                        type: object
+                        properties:
+                          count:
+                            type: number
+                            example: 12
+                          diffFromLastWeek:
+                            type: number
+                            example: 45
+                      completionRate:
+                        type: object
+                        properties:
+                          count:
+                            type: number
+                            example: "0.00"
+                          diffFromLastWeek:
+                            type: number
+                            example: 45
+                      completedTask:
+                        type: object
+                        properties:
+                          count:
+                            type: number
+                            example: 0
+                          diffFromLastWeek:
+                            type: number
+                            example: 78
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        401:
+          $ref: "#/components/responses/401Res"
+        500:
+          $ref: "#/components/responses/500Res"
+  /dashboard/recent-tasks:
+    get:
+      summary: Fetch the list of the recent task to show on dashboard
+      tags: [Dashboard]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: "Success"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          example: "62e4d99186f0d10ced93df13"
+                        name:
+                          type: string
+                          example: "First Task"
+                        description:
+                          type: string
+                          example: "Task Description"
+                        status:
+                          type: string
+                          example: "todo"
+                        userId:
+                          type: string
+                          example: "62e4d99186f0d10ced93df13"
+                        createdAt:
+                          type: string
+                          example: "2022-07-30T07:11:13.913Z"
+                        updatedAt:
+                          type: string
+                          example: "2022-07-30T07:11:13.913Z"
+                        completedAt:
+                            type: string
+                            example: "2022-07-30T07:11:13.913Z"
+                        priority:
+                          type: string
+                          enum:
+                            - low
+                            - medium
+                            - high
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        401:
+          $ref: "#/components/responses/401Res"
+        500:
+          $ref: "#/components/responses/500Res"
+  /dashboard/task-completion-stats:
+    get:
+      summary: Get the weekly data of the task task completion
+      tags: [Dashboard]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                    example: true
+                  statusCode:
+                    type: number
+                    example: 200
+                  message:
+                    type: string
+                    example: "Success"
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        count:
+                          type: number
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        401:
+          $ref: "#/components/responses/401Res"
+        500:
+          $ref: "#/components/responses/500Res"
+
+components:
+  # Reusable schemas (data models)
+  schemas:
+    resWithoutData:
+      type: object
+      properties:
+        status:
+          type: boolean
+        statusCode:
+          type: number
+        message:
+          type: string
+        data:
+          type: object
+
+  # Reusable path, query, header and cookie parameters
+  parameters:
+
+  # Security scheme definitions (see Authentication)
+  securitySchemes:
+    bearerAuth: # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  # Reusable request bodies
+  requestBodies:
+
+  # Reusable responses, such as 401 Unauthorized or 400 Bad Request
+  responses:
+    500Res:
+      description: Server Errors
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              status:
+                type: boolean
+              statusCode:
+                type: number
+              message:
+                type: string
+            example:
+              status: false
+              statusCode: 500
+              message: "Internal server error"
+    401Res:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/resWithoutData"
+          example:
+            status: false
+            statusCode: 401
+            message: "Unauthorized"
+
+  # Reusable response headers
+  headers:
+
+  # Reusable examples
+  examples:
+
+  # Reusable links
+  links:
+
+  # Reusable callbacks
+  callbacks:
+security:
+  - bearerAuth: []
