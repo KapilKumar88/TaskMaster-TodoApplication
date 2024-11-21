@@ -27,7 +27,7 @@ export default function EmailVerificationPage() {
         title: "Success",
         description: result?.message ?? "Email verified successfully",
       });
-      // navigate("/login");
+      navigate("/login");
       return;
     } catch (error: any) {
       setLoading(false);

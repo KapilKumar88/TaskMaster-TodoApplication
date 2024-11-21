@@ -28,6 +28,10 @@ exports.exceptionHandler = (error, req, res) => {
       statusCode = 422;
       message = `Uploaded file is too large. Max allowed size is ${error?.limit} bytes.`;
       break;
+    case "ERR_OSSL_BAD_DECRYPT":
+      statusCode = 400;
+      message = `Invalid Token.`;
+      break;
     default:
       statusCode = error?.status || 500;
       message = error?.message || "Internal server error.";
