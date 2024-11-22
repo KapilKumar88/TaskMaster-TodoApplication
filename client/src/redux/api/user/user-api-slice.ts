@@ -18,9 +18,6 @@ const userApiSlice = apiSlice.injectEndpoints({
       query: (body) => ({
         url: `/update-profile`,
         method: "PUT",
-        // headers: {
-        //   "Content-Type": "multipart/form-data",
-        // },
         body,
       }),
       invalidatesTags: ["UserProfile"],

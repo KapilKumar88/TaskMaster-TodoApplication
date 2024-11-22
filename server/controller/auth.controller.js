@@ -33,14 +33,20 @@ exports.login = async (req, res, next) => {
       email: req.validated.email,
     });
 
-    if (
-      result === null ||
-      !(await verifyHash(req.validated.password, result.password))
-    ) {
+    if (result === null) {
       return sendResponse(res, false, 401, "Invalid emailId and password");
     }
 
-    if (result?.isEmailVerified === null || !result?.isEmailVerified) {
+    const isPasswordValid = await verifyHash(
+      req.validated.password,
+      result.password
+    );
+
+    if (!isPasswordValid) {
+      return sendResponse(res, false, 401, "Invalid emailId and password");
+    }
+
+    if (result?.emailVerifiedAt === null) {
       return sendResponse(
         res,
         false,

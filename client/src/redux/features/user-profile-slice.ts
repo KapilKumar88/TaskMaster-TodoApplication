@@ -44,20 +44,22 @@ export const UserProfileSlice = createSlice({
       };
     },
   },
-  // extraReducers: (builder) => {
-  //   builder.addMatcher(
-  //     apiSlice.endpoints.fetchUserProfile?.matchFulfilled,
-  //     (state, { payload }) => {
-  //       state.name = payload.name;
-  //       state.email = payload.email;
-  //       state.profileImage = payload?.profileImage;
-  //       state.notificationStatus.emailNotification =
-  //         payload?.notification?.emailNotification;
-  //       state.notificationStatus.pushNotification =
-  //         payload?.notification?.pushNotification;
-  //     }
-  //   );
-  // },
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      (payload) => {
+        return apiSlice.endpoints?.fetchUserProfile?.matchFulfilled(payload);
+      },
+      (state, action) => {
+        state.name = action.payload?.name;
+        state.email = action.payload?.email;
+        state.profileImage = action.payload?.profileImage;
+        state.notificationStatus.emailNotification =
+          action.payload?.notification?.emailNotification;
+        state.notificationStatus.pushNotification =
+          action.payload?.notification?.pushNotification;
+      }
+    );
+  },
 });
 
 export const { setAllUserDetails, resetUserDetails } = UserProfileSlice.actions;

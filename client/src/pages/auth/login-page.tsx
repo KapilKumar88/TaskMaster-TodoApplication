@@ -38,7 +38,6 @@ export default function LoginPage() {
       }).unwrap();
 
       if (response.status) {
-        console.log("hereeeeeeeeeee")
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("refreshToken", response.data.refreshToken);
         dispatch(
@@ -54,12 +53,12 @@ export default function LoginPage() {
         });
         dispatch(apiSlice.endpoints.fetchUserProfile.initiate());
         navigate("/dashboard");
+        return;
       }
-    } catch (error) {
-      console.log(error, "error");
+    } catch (error: any) {
       toast({
-        title: "error",
-        description: error?.message ?? "Something went wrong. Please try again",
+        title: "Error",
+        description: error?.message || error?.data.message || "Something went wrong. Please try again",
       });
     }
   };
