@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { LogIn } from "lucide-react";
+import { Loader, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,50 +13,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { useLoginMutation } from "@/redux/api/auth/auth-api-slice";
-import { useDispatch } from "react-redux";
-import { setUserAuthDetails } from "@/redux/features/auth-slice";
-import { apiSlice } from "@/redux/api/api-slice";
+import { useForgotPasswordMutation } from "@/redux/api/auth/auth-api-slice";
 
 export default function ForgotPasswordPage() {
-  const dispatch = useDispatch();
-  const [Login] = useLoginMutation();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [ForgotPassword, { isLoading }] = useForgotPasswordMutation();
+  const [email, setEmail] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await Login({
-        email: formData.email,
-        password: formData.password,
+      const response = await ForgotPassword({
+        email: email,
       }).unwrap();
 
-      if (response.status) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("refreshToken", response.data.refreshToken);
-        dispatch(
-          setUserAuthDetails({
-            isAuthenticated: true,
-            token: response.data.token,
-            refreshToken: response.data.refreshToken,
-          })
-        );
-        toast({
-          title: "Login Successful",
-          description: "Welcome back!",
-        });
-        dispatch(apiSlice.endpoints.fetchUserProfile.initiate());
-        navigate("/dashboard");
-      }
-    } catch (error) {
       toast({
-        title: "error",
-        description: error?.message ?? "Something went wrong. Please try again",
+        title: "Success",
+        description: response?.message ?? "Password reset instructions sent",
+      });
+      navigate("/login");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description:
+          error?.message ||
+          error?.data.message ||
+          "Something went wrong. Please try again",
       });
     }
   };
@@ -71,7 +54,7 @@ export default function ForgotPasswordPage() {
           Enter your email to receive password reset instructions
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleForgotPassword}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -80,16 +63,16 @@ export default function ForgotPasswordPage() {
               type="email"
               placeholder="m@example.com"
               required
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full">
-            <LogIn className="mr-2 h-4 w-4" /> Send Instructions
+            {!isLoading && <LogIn className="mr-2 h-4 w-4" />}
+            {isLoading && <Loader className="animate-spin" />}
+            Send Instructions
           </Button>
           <div className="text-sm text-center text-gray-500">
             Already have an account?

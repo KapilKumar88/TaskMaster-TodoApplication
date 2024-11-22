@@ -74,7 +74,6 @@ export default function TodoListingPage() {
 
   const handleToggleComplete = async (id: string, status: TodoStatus) => {
     try {
-      console.log(status, ">>>>>>");
       const newStatus =
         status === TodoStatus.TODO ? TodoStatus.DONE : TodoStatus.TODO;
       const response = await UpdateTodo({ id, status: newStatus }).unwrap();

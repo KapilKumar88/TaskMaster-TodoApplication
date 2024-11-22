@@ -4,6 +4,7 @@ const { generateJwt } = require("../helpers/jwt.helper");
 const {
   welcomeEmail,
   sendVerificationEmail,
+  sendForgotPasswordEmail,
 } = require("../helpers/mail.helper");
 const { v4: uuidV4 } = require("uuid");
 const moment = require("moment");
@@ -210,6 +211,59 @@ exports.resendEmailVerificationMail = async (req, res, next) => {
       await sendVerificationEmail(user.email, user.name);
     }
     return sendResponse(res, true, 200, "Instructions sent successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.forgotPassword = async (req, res, next) => {
+  try {
+    const user = await userService.findOne(
+      {
+        email: req.validated.email,
+      },
+      {
+        _id: 1,
+        email: 1,
+        name: 1,
+      }
+    );
+
+    sendForgotPasswordEmail(user.email, user.name);
+    return sendResponse(res, true, 200, "Instructions sent successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.resetPassword = async (req, res, next) => {
+  try {
+    let decryptToken = decrypt(req.validated.token);
+    decryptToken = JSON.parse(decryptToken);
+
+    const currentTime = moment().unix();
+
+    if (currentTime > decryptToken.expiryTime) {
+      return sendResponse(res, false, 400, "Link expired");
+    }
+
+    const checkToken = await userService.findOne({
+      email: decryptToken?.email,
+      resetPasswordToken: decryptToken?.token,
+    });
+
+    if (checkToken === null) {
+      return sendResponse(res, false, 400, "Invalid Link");
+    }
+
+    const hash = await hashValue(req.validated.new_password);
+
+    await userService.updateUserById(checkToken?._id, {
+      password: hash,
+      resetPasswordToken: null,
+    });
+
+    return sendResponse(res, true, 200, "Password reset successfully");
   } catch (error) {
     next(error);
   }

@@ -150,6 +150,134 @@ paths:
                 message: "Something went wrong please try again"
         500:
           $ref: "#/components/responses/500Res"
+  /forgot-password:
+    post:
+      summary: Api to receive email to reset password
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - email
+              properties:
+                email:
+                  type: "string"
+                  example: "john@example.com"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Instructions sent successfully"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: '"email" is not allowed to be empty'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
+  /reset-password:
+    post:
+      summary: Reset password
+      tags: [Authentication]
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: "object"
+              required:
+                - token
+                - new_password
+                - confirm_password
+              properties:
+                token:
+                  type: "string"
+                  example: "55f3f84ec6de552d364c125b46962b725b895d146b8fcf39d2d48c96b8dd1f12ff7c88483242aed4f8f5a1fa5bc8a83f79527c76f48f02ebc0053c5203c8aecc704fc88f6db1b455bf9349825d3cc2ebcd1aebeb6fe730c001a4e72bbeacbe9748d22a8380c187b64892cd91c84be691494f450c7c479e2701e69ef403dc07edd4ec5b8384e6d2ec1cc8199b5d554508"
+                new_password:
+                  type: "string"
+                  example: "TT^&4675884"
+                confirm_password:
+                  type: "string"
+                  example: "TT^&4675884"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: boolean
+                  statusCode:
+                    type: number
+                  message:
+                    type: string
+              example:
+                status: true
+                statusCode: 200
+                message: "Password reset successfully"
+        422:
+          description: Validation Errors
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 422
+                message: '"token" is not allowed to be empty'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/resWithoutData"
+              example:
+                status: false
+                statusCode: 400
+                message: "Something went wrong please try again"
+        500:
+          $ref: "#/components/responses/500Res"
   /refreshToken:
     post:
       summary: Refresh Token API

@@ -5,13 +5,18 @@ const {
   loginValidation,
   registerValidation,
   refreshTokenValidation,
-  resendEmailVerification,
+  emailValidation,
   emailVerificationValidation,
+  resetPasswordValidation,
 } = require("../validationSchema/auth-schema");
 
 router.post("/register", registerValidation, authController.register);
 router.post("/login", loginValidation, authController.login);
-router.post("/refreshToken", refreshTokenValidation, authController.refreshToken);
+router.post(
+  "/refreshToken",
+  refreshTokenValidation,
+  authController.refreshToken
+);
 router.post(
   "/verify-email",
   emailVerificationValidation,
@@ -19,8 +24,14 @@ router.post(
 );
 router.post(
   "/resend-email-verification",
-  resendEmailVerification,
+  emailValidation,
   authController.resendEmailVerificationMail
+);
+router.post("/forgot-password", emailValidation, authController.forgotPassword);
+router.post(
+  "/reset-password",
+  resetPasswordValidation,
+  authController.resetPassword
 );
 
 module.exports = router;

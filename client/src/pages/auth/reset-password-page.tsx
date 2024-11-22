@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, Loader, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,53 +12,42 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Link, useNavigate } from "react-router-dom";
-import { Toaster } from "@/components/ui/toaster";
-import { useLoginMutation } from "@/redux/api/auth/auth-api-slice";
-import { useDispatch } from "react-redux";
-import { setUserAuthDetails } from "@/redux/features/auth-slice";
-import { apiSlice } from "@/redux/api/api-slice";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useResetPasswordMutation } from "@/redux/api/auth/auth-api-slice";
 
 export default function ResetPasswordPage() {
-  const dispatch = useDispatch();
-  const [Login] = useLoginMutation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [ResetPassword, { isLoading }] = useResetPasswordMutation();
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    newPassword: "",
+    confirmPassword: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await Login({
-        email: formData.email,
-        password: formData.password,
+      const response = await ResetPassword({
+        new_password: formData.newPassword,
+        confirm_password: formData.confirmPassword,
+        token: searchParams.get("token"),
       }).unwrap();
 
-      if (response.status) {
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("refreshToken", response.data.refreshToken);
-        dispatch(
-          setUserAuthDetails({
-            isAuthenticated: true,
-            token: response.data.token,
-            refreshToken: response.data.refreshToken,
-          })
-        );
-        toast({
-          title: "Login Successful",
-          description: "Welcome back!",
-        });
-        dispatch(apiSlice.endpoints.fetchUserProfile.initiate());
-        navigate("/dashboard");
-      }
-    } catch (error) {
       toast({
-        title: "error",
-        description: error?.message ?? "Something went wrong. Please try again",
+        title: "Success",
+        description: response?.message ?? "Password reset successfully",
+      });
+      navigate("/login");
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description:
+          error?.message ||
+          error?.data.message ||
+          "Something went wrong. Please try again",
       });
     }
   };
@@ -73,46 +62,18 @@ export default function ResetPasswordPage() {
           Change your password
         </CardDescription>
       </CardHeader>
-      <form onSubmit={handleLogin}>
+      <form onSubmit={handleResetPassword}>
         <CardContent className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="newPassword">New Password</Label>
-            <Input
-              id="newPassword"
-              type={showPassword ? "text" : "password"}
-              required
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4 text-gray-500" />
-              ) : (
-                <Eye className="h-4 w-4 text-gray-500" />
-              )}
-              <span className="sr-only">
-                {showPassword ? "Hide password" : "Show password"}
-              </span>
-            </Button>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="password">Confirm Password</Label>
             <div className="relative">
               <Input
-                id="password"
+                id="newPassword"
                 type={showPassword ? "text" : "password"}
                 required
-                value={formData.password}
+                value={formData.newPassword}
                 onChange={(e) =>
-                  setFormData({ ...formData, password: e.target.value })
+                  setFormData({ ...formData, newPassword: e.target.value })
                 }
               />
               <Button
@@ -133,10 +94,42 @@ export default function ResetPasswordPage() {
               </Button>
             </div>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <div className="relative">
+              <Input
+                id="confirmPassword"
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                value={formData.confirmPassword}
+                onChange={(e) =>
+                  setFormData({ ...formData, confirmPassword: e.target.value })
+                }
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4 text-gray-500" />
+                ) : (
+                  <Eye className="h-4 w-4 text-gray-500" />
+                )}
+                <span className="sr-only">
+                  {showConfirmPassword ? "Hide password" : "Show password"}
+                </span>
+              </Button>
+            </div>
+          </div>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full">
-            <LogIn className="mr-2 h-4 w-4" /> Reset Password
+            {!isLoading && <LogIn className="mr-2 h-4 w-4" />}
+            {isLoading && <Loader className="animate-spin mr-2 h-4 w-4" />}
+            Reset Password
           </Button>
         </CardFooter>
       </form>

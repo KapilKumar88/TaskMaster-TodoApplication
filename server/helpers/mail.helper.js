@@ -35,7 +35,6 @@ const welcomeEmail = async (params) => {
 
     return sendMail(params.email, "Welcome Email", templateStr);
   } catch (error) {
-    console.log(error, ">>>>>>>");
     logger.error("Internal server error in Welcome Email function");
     return false;
   }
@@ -81,7 +80,51 @@ const sendVerificationEmail = async (email, username) => {
   }
 };
 
+const sendForgotPasswordEmail = async (email, username) => {
+  try {
+    const randomToken = generateRandomToken();
+    const expiryTime = moment().add(10, "m").unix();
+    const encryptedObject = encrypt(
+      JSON.stringify({
+        token: randomToken,
+        expiryTime: expiryTime,
+        email: email,
+      })
+    );
+
+    await userService.updateUserByEmail(email, {
+      resetPasswordToken: randomToken,
+    });
+
+    const templateStr = await ejs.renderFile(
+      path.join(
+        __dirname,
+        "..",
+        "views",
+        "email-templates",
+        "forgot-password.ejs"
+      ),
+      {
+        username: username,
+        appName: APP_NAME,
+        resetPasswordURL: `${APP_FRONT_END_APP_URL}/reset-password?token=${encryptedObject}`,
+        currentYear: currentYear,
+      }
+    );
+
+    return sendMail(
+      email,
+      `Reset Password Instruction for the ${APP_NAME} Account`,
+      templateStr
+    );
+  } catch (error) {
+    logger.error("Internal server error in sendForgotPasswordEmail");
+    return false;
+  }
+};
+
 module.exports = {
   welcomeEmail,
   sendVerificationEmail,
+  sendForgotPasswordEmail,
 };
