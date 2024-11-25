@@ -1,5 +1,4 @@
 import RecentTask from "@/components/dashboard/recent-task";
-import UpcomingTask from "@/components/dashboard/upcoming-task";
 import TaskCompletionStats from "@/components/dashboard/task-completion-stats";
 import TaskStats from "@/components/dashboard/task-stats";
 
@@ -13,7 +12,6 @@ export default function DashboardPage() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7 mt-4">
         <TaskCompletionStats />
         <RecentTask />
-        {/* <UpcomingTask /> */}
       </div>
     </>
   );
