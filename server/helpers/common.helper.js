@@ -109,7 +109,6 @@ exports.getDateRangeByPeriod = (datePeriod) => {
  */
 exports.generateRandomNameForFile = (file) => {
   const ext = file.name.split(".").pop();
-  console.log(ext, file.name)
   const fileName = `${moment().unix()}_${this.generateRandomToken(10)}.${ext}`;
   return fileName;
 };

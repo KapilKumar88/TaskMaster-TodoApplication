@@ -2,6 +2,7 @@ import apiConfig from "@/config/app.config";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { setAuthTokens, setLoggedOut } from "../features/auth-slice";
 import { resetUserDetails } from "../features/user-profile-slice";
+import { persistor } from "../store";
 
 const baseQuery = fetchBaseQuery({
   baseUrl: apiConfig.API_BASE_URL,
@@ -38,6 +39,9 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
       result = await baseQuery(args, api, extraOptions);
     } else {
       localStorage.clear();
+      // if (persistor) {
+      //   await persistor.purge();
+      // }
       api.dispatch(resetUserDetails());
       api.dispatch(setLoggedOut());
     }

@@ -3,7 +3,6 @@ const { sendResponse } = require("../helpers/requestHandler.helper");
 
 const updateProfileValidation = async (req, res, next) => {
   try {
-    console.log(req.body, "req.body", req.files);
     const schema = Joi.object({
       name: Joi.string().max(50).optional().label("Full Name"),
       password: Joi.string().min(8).optional().label("Password"),
@@ -32,7 +31,6 @@ const updateProfileValidation = async (req, res, next) => {
     req.validated = value;
     next();
   } catch (error) {
-    console.log(error, ">>>error this side>>>");
     next(error);
   }
 };

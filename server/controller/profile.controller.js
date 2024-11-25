@@ -82,7 +82,6 @@ exports.updateProfile = async (req, res, next) => {
         "images",
         fileName
       );
-      console.log(profileImagePath, ">>>profileImagePath");
       req.files.profileImage.mv(profileImagePath);
 
       await userService.updateUserById(req.user._id, {

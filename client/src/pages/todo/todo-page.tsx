@@ -84,8 +84,8 @@ export default function TodoPage() {
       <div className="mt-4 flex items-center justify-between">
         <div>
           Showing {(currentPage - 1) * RECORDS_PER_PAGE + 1} to{" "}
-          {Math.min(currentPage * RECORDS_PER_PAGE, todoListData?.totalRecords)}{" "}
-          of {todoListData?.totalRecords} todos
+          {Math.min(currentPage * RECORDS_PER_PAGE, todoListData?.totalRecords ?? 0)}{" "}
+          of {todoListData?.totalRecords ?? 0} todos
         </div>
         <div className="space-x-2">
           <Button

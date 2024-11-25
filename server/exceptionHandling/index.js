@@ -10,7 +10,6 @@ const logger = require("../utils/winston.util");
  */
 exports.exceptionHandler = (error, req, res) => {
   let statusCode, message;
-  console.log(error, ">>>>>", error?.name, error?.code);
   switch (error?.code || error?.name) {
     case 11000:
       statusCode = 422;

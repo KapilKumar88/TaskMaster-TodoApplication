@@ -10,7 +10,6 @@ const dashboardApiSlice = apiSlice.injectEndpoints({
         };
       },
       transformResponse: (response: any) => {
-        console.log(response, ">>>>>>>>>>>>>>>responeeee");
         return response.data;
       },
     }),
@@ -22,7 +21,6 @@ const dashboardApiSlice = apiSlice.injectEndpoints({
         };
       },
       transformResponse: (response: any) => {
-        console.log(response, ">>>>>>>>>>>>>>>responeeee");
         return response.data;
       },
     }),
