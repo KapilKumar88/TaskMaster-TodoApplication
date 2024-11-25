@@ -4,7 +4,6 @@ import RegisterPage from "../pages/auth/register-page";
 import DashboardPage from "../pages/dashboard/dashboard-page";
 import AppLayout from "@/components/layout/app-layout";
 import ErrorPage from "@/pages/error/error-page";
-import TodoListingPage from "@/pages/todo/todo-listing-page";
 import AuthGuard from "@/guard/auth-guard";
 import AccountPage from "@/pages/profile/account-page";
 import AuthLayout from "@/components/layout/auth-layout";
@@ -12,6 +11,7 @@ import ForgotPasswordPage from "@/pages/auth/forgot-password-page";
 import ResetPasswordPage from "@/pages/auth/reset-password-page";
 import EmailVerificationPage from "@/pages/auth/email-verification-page";
 import LandingPage from "@/pages/landing-page";
+import TodoPage from "@/pages/todo/todo-page";
 
 const router = createBrowserRouter([
   {
@@ -61,7 +61,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/todo",
-        element: <TodoListingPage />,
+        element: <TodoPage />,
       },
       {
         path: "/account",

@@ -4,7 +4,7 @@ import { setAuthTokens, setLoggedOut } from "../features/auth-slice";
 import { resetUserDetails } from "../features/user-profile-slice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: apiConfig.apiBaseUrl,
+  baseUrl: apiConfig.API_BASE_URL,
   prepareHeaders(headers, api) {
     const authToken = api.getState();
     headers.set("Accept", "application/json");
@@ -29,7 +29,7 @@ const baseQueryWithReAuth = async (args, api, extraOptions) => {
       api,
       extraOptions
     );
-    console.log(refreshResult, "refreshResult");
+
     if (refreshResult.data) {
       localStorage.setItem("token", refreshResult.data.data.token);
       api.dispatch(

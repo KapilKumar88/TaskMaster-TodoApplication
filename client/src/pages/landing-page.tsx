@@ -23,7 +23,7 @@ export default function LandingPage() {
       <Card className="w-full max-w-md mx-auto">
         <CardHeader className="text-center">
           <CardTitle className="text-4xl font-bold">
-            {appConfig.appName}
+            {appConfig.APP_NAME}
           </CardTitle>
           <CardDescription>
             Organize your life, one task at a time
@@ -66,7 +66,7 @@ export default function LandingPage() {
         </CardFooter>
       </Card>
       <footer className="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
-        © 2024 {appConfig.appName}. All rights reserved.
+        © 2024 {appConfig.APP_NAME}. All rights reserved.
       </footer>
     </div>
   );

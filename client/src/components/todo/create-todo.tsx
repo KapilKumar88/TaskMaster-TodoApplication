@@ -4,13 +4,8 @@ import { Input } from "../ui/input";
 import { useState } from "react";
 import { useCreateTodoMutation } from "@/redux/api/todo/todo-api-slice";
 import { useToast } from "@/hooks/use-toast";
-
-type Todo = {
-  name: string;
-  description: string;
-  status: "in-progress" | "done" | "todo";
-  //   priority: "low" | "medium" | "high";
-};
+import { Todo } from "@/common/types";
+import { TodoPriority, TodoStatus } from "@/common/enums";
 
 export default function CreateTodo() {
   const [CreateTodo] = useCreateTodoMutation();
@@ -24,7 +19,8 @@ export default function CreateTodo() {
         const newTodoItem: Todo = {
           name: newTodo.trim(),
           description: newTodo.trim(),
-          status: "todo",
+          status: TodoStatus.TODO,
+          priority: TodoPriority.LOW,
         };
         const response = await CreateTodo(newTodoItem).unwrap();
         toast({
@@ -33,11 +29,14 @@ export default function CreateTodo() {
         });
         setNewTodo("");
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "error",
-        description: error?.message ?? "Something went wrong. Please try again",
-      })
+        title: "Error",
+        description:
+          error?.message ||
+          error?.data.message ||
+          "Something went wrong. Please try again",
+      });
     }
   };
 

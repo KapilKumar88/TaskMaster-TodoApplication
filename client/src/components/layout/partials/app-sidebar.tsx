@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
 import { Link } from "react-router-dom";
+import appConfig from "../../../config/app.config";
 
 export default function AppSidebar() {
   return (
@@ -27,7 +28,9 @@ export default function AppSidebar() {
                 <GalleryVerticalEnd className="size-4" />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">Todo Application</span>
+                <span className="truncate font-semibold">
+                  {appConfig.APP_NAME}
+                </span>
                 <span className="truncate text-xs"></span>
               </div>
             </SidebarMenuButton>

@@ -1,8 +1,11 @@
+import { TodoPriority, TodoStatus } from "./enums";
+
 export type Todo = {
-  id: string;
+  _id?: string;
   name: string;
-  completed: boolean;
   description?: string;
-  status: "todo" | "in-progress" | "done";
-  priority: "low" | "medium" | "high";
+  completedAt?: Date | null;
+  status: TodoStatus;
+  priority: TodoPriority;
+  createdAt?: Date;
 };
