@@ -104,11 +104,3 @@ exports.taskCompletionChartData = async (req, res, next) => {
   }
 };
 
-exports.upcomingTaskCalenderData = async (req, res, next) => {
-  try {
-    const result = await dashboardService.upcomingTaskData(req.user._id);
-    return sendResponse(res, true, 200, "Success", result);
-  } catch (error) {
-    next(error);
-  }
-};

@@ -16,10 +16,4 @@ router.get(
   dashboardController.taskCompletionChartData
 );
 
-router.get(
-  "/upcoming-task",
-  isAuthenticated,
-  dashboardController.upcomingTaskCalenderData
-);
-
 module.exports = router;

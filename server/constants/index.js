@@ -26,9 +26,15 @@ const DAY_OF_WEEK_MAP = [
   "Saturday",
 ];
 
+const USER_TYPE = Object.freeze({
+  ADMIN: "admin",
+  USER: "user",
+});
+
 module.exports = {
   TASK_PRIORITY_TYPES,
   TASK_STATUS,
   DATE_PERIOD,
-  DAY_OF_WEEK_MAP
+  DAY_OF_WEEK_MAP,
+  USER_TYPE
 };

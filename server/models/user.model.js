@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { APP_URL } = require("../config/app.config");
+const { USER_TYPE } = require("../constants");
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,8 +20,8 @@ const userSchema = new mongoose.Schema(
     userType: {
       type: String,
       required: true,
-      enum: ["admin", "user"],
-      default: "user",
+      enum: [USER_TYPE.ADMIN, USER_TYPE.USER],
+      default: USER_TYPE.USER,
     },
     emailVerifiedAt: {
       type: Date,
