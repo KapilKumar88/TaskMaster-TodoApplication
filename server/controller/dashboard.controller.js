@@ -17,47 +17,48 @@ exports.statistics = async (req, res, next) => {
       req.user._id,
       currentWeekStart,
       currentWeekEnd
-    );
+    ) || 0;
 
     const lastWeekTasks = await dashboardService.totalTasksOfUser(
       req.user._id,
       lastWeekStart,
       lastWeekEnd
-    );
+    ) || 0;
 
     const completedTaskCurrentWeek =
       await dashboardService.totalCompletedTasksOfUser(
         req.user._id,
         currentWeekStart,
         currentWeekEnd
-      );
+      ) || 0;
+
     const completedTaskLastWeek =
       await dashboardService.totalCompletedTasksOfUser(
         req.user._id,
         lastWeekStart,
         lastWeekEnd
-      );
+      ) || 0;
 
     const pendingTaskCurrentWeek =
       await dashboardService.totalPendingTasksOfUser(
         req.user._id,
         currentWeekStart,
         currentWeekEnd
-      );
+      ) || 0;
+
     const pendingTaskLastWeek = await dashboardService.totalPendingTasksOfUser(
       req.user._id,
       lastWeekStart,
       lastWeekEnd
-    );
+    ) || 0;
 
-    const completionRate = (
-      (completedTaskCurrentWeek / currentWeekTasks) *
-      100
-    ).toFixed(2);
-    const previousWeekCompletionRate = (
-      (completedTaskLastWeek / lastWeekTasks) *
-      100
-    ).toFixed(2);
+    const completionRate = currentWeekTasks
+      ? ((completedTaskCurrentWeek / currentWeekTasks) * 100).toFixed(2)
+      : '0';
+
+    const previousWeekCompletionRate = lastWeekTasks
+      ? ((completedTaskLastWeek / lastWeekTasks) * 100).toFixed(2)
+      : '0';
 
     const result = {
       totalTask: {
@@ -73,8 +74,8 @@ exports.statistics = async (req, res, next) => {
         diffFromLastWeek: pendingTaskCurrentWeek - pendingTaskLastWeek,
       },
       completionRate: {
-        count: completionRate,
-        diffFromLastWeek: completionRate - previousWeekCompletionRate,
+        count: parseFloat(completionRate),
+        diffFromLastWeek: parseFloat(completionRate) - parseFloat(previousWeekCompletionRate),
       },
     };
 
