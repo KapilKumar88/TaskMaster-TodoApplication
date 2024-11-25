@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, UserPlus } from "lucide-react";
+import { Eye, EyeOff, Loader, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -16,7 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useRegisterMutation } from "@/redux/api/auth/auth-api-slice";
 
 export default function RegisterPage() {
-  const [Register] = useRegisterMutation();
+  const [Register, { isLoading }] = useRegisterMutation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -160,7 +160,9 @@ export default function RegisterPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full">
-            <UserPlus className="mr-2 h-4 w-4" /> Register
+            {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+            {!isLoading && <UserPlus className="mr-2 h-4 w-4" />}
+            Register
           </Button>
           <div className="text-sm text-center text-gray-500">
             Already have an account?{" "}

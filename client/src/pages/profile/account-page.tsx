@@ -1,5 +1,5 @@
 import * as React from "react";
-import { CameraIcon, CheckIcon, Pencil } from "lucide-react";
+import { CameraIcon, Loader } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,19 +34,24 @@ import { useToast } from "@/hooks/use-toast";
 
 export default function AccountPage() {
   const { data: userProfile } = useFetchUserProfileQuery({});
-  const [updateUserProfile] = useUpdateUserProfileMutation();
+  const [updateUserProfile, { isLoading }] = useUpdateUserProfileMutation();
   const { toast } = useToast();
-  const [isEditing, setIsEditing] = React.useState(false);
+  const [isEditing, setIsEditing] = React.useState<boolean>(false);
+  const [notificationLoadingState, setNotificationLoadingState] =
+    React.useState<boolean>(false);
+  const [passwordChangeLoadingState, setPasswordChangeLoadingState] =
+    React.useState<boolean>(false);
   const [changePasswordState, setChangePasswordState] = React.useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
-  const [name, setName] = React.useState("");
+  const [name, setName] = React.useState<string>(userProfile?.name ?? "");
   const [passwordError, setPasswordError] = React.useState("");
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const updatePassword = async () => {
+    setPasswordChangeLoadingState(true);
     try {
       const formData = new FormData();
       formData.append("current_password", changePasswordState.currentPassword);
@@ -66,17 +71,21 @@ export default function AccountPage() {
         });
       } else {
         toast({
-          title: "error",
+          title: "Error",
           description:
             response?.message ?? "Something went wrong.Pleas try again",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
         title: "error",
-        description: error?.message ?? "Something went wrong. Please try again",
+        description:
+          error?.message ||
+          error?.data?.message ||
+          "Something went wrong. Please try again",
       });
     }
+    setPasswordChangeLoadingState(false);
   };
 
   const updateProfilePicture = async () => {
@@ -108,7 +117,6 @@ export default function AccountPage() {
       const formData = new FormData();
       formData.append("profileImage", fileInputRef.current.files[0]);
       const response = await updateUserProfile(formData).unwrap();
-      console.log(response, ">>>>>responseeee");
       if (response.status) {
         fileInputRef.current.value = "";
         toast({
@@ -122,8 +130,7 @@ export default function AccountPage() {
             response?.message ?? "Something went wrong.Pleas try again",
         });
       }
-    } catch (error) {
-      console.log(error, ">>>>>errororrrr");
+    } catch (error: any) {
       toast({
         title: "Error",
         description:
@@ -148,15 +155,18 @@ export default function AccountPage() {
         });
       } else {
         toast({
-          title: "error",
+          title: "Error",
           description:
             response?.message ?? "Something went wrong.Pleas try again",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "error",
-        description: error?.message ?? "Something went wrong. Please try again",
+        title: "Error",
+        description:
+          error?.message ||
+          error?.data.message ||
+          "Something went wrong. Please try again",
       });
     }
   };
@@ -165,6 +175,7 @@ export default function AccountPage() {
     emailNotification: boolean;
     pushNotification: boolean;
   }) => {
+    setNotificationLoadingState(true);
     try {
       const formData = new FormData();
       formData.append("email_notification", payload.emailNotification);
@@ -180,17 +191,21 @@ export default function AccountPage() {
         });
       } else {
         toast({
-          title: "error",
+          title: "Error",
           description:
             response?.message ?? "Something went wrong.Pleas try again",
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       toast({
-        title: "error",
-        description: error?.message ?? "Something went wrong. Please try again",
+        title: "Error",
+        description:
+          error?.message ||
+          error?.data.message ||
+          "Something went wrong. Please try again",
       });
     }
+    setNotificationLoadingState(false);
   };
 
   return (
@@ -252,7 +267,10 @@ export default function AccountPage() {
         </CardContent>
         <CardFooter>
           {isEditing ? (
-            <Button onClick={updateUserDetails}>Save Changes</Button>
+            <Button onClick={updateUserDetails}>
+              Save Changes
+              {isLoading && <Loader className="ml-2 animate-spin" />}
+            </Button>
           ) : (
             <Button onClick={() => setIsEditing(!isEditing)}>
               Edit Profile
@@ -287,18 +305,23 @@ export default function AccountPage() {
             </div>
             <div className="flex items-center justify-between">
               <Label htmlFor="push-notifications">Push Notifications</Label>
-              <Switch
-                id="push-notifications"
-                checked={userProfile?.notification.pushNotification}
-                onCheckedChange={() =>
-                  updateNotificationStatus({
-                    emailNotification:
-                      userProfile?.notification.emailNotification,
-                    pushNotification:
-                      !userProfile?.notification.pushNotification,
-                  })
-                }
-              />
+              {!notificationLoadingState && (
+                <Switch
+                  id="push-notifications"
+                  checked={userProfile?.notification.pushNotification}
+                  onCheckedChange={() =>
+                    updateNotificationStatus({
+                      emailNotification:
+                        userProfile?.notification.emailNotification,
+                      pushNotification:
+                        !userProfile?.notification.pushNotification,
+                    })
+                  }
+                />
+              )}
+              {notificationLoadingState && (
+                <Loader className="ml-2 animate-spin" />
+              )}
             </div>
           </div>
           <Separator />
@@ -358,7 +381,12 @@ export default function AccountPage() {
               )}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button className="w-full">Change Password</Button>
+                  <Button className="w-full">
+                    Change Password
+                    {passwordChangeLoadingState && (
+                      <Loader className="ml-2 animate-spin" />
+                    )}
+                  </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
                   <AlertDialogHeader>

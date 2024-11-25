@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff, LogIn } from "lucide-react";
+import { Eye, EyeOff, Loader, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,7 +20,7 @@ import { apiSlice } from "@/redux/api/api-slice";
 
 export default function LoginPage() {
   const dispatch = useDispatch();
-  const [Login] = useLoginMutation();
+  const [Login, { isLoading }] = useLoginMutation();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -58,7 +58,10 @@ export default function LoginPage() {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error?.message || error?.data.message || "Something went wrong. Please try again",
+        description:
+          error?.message ||
+          error?.data.message ||
+          "Something went wrong. Please try again",
       });
     }
   };
@@ -119,7 +122,9 @@ export default function LoginPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <Button type="submit" className="w-full">
-            <LogIn className="mr-2 h-4 w-4" /> Login
+            {isLoading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+            {!isLoading && <LogIn className="mr-2 h-4 w-4" />}
+            Login
           </Button>
           <div className="text-sm text-center text-gray-500">
             Don&apos;t have an account?{" "}
