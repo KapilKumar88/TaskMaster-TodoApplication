@@ -21,11 +21,12 @@ export default function TodoList({
   const [UpdateTodo] = useUpdateTodoMutation();
   const { toast } = useToast();
 
-  const handleToggleComplete = async (id: string) => {
+  const handleToggleComplete = async (id: string, todoStatus: TodoStatus) => {
     try {
       const response = await UpdateTodo({
         id,
-        status: TodoStatus.DONE,
+        status:
+          todoStatus === TodoStatus.DONE ? TodoStatus.TODO : TodoStatus.DONE,
       }).unwrap();
       if (response?.status) {
         toast({
@@ -63,7 +64,7 @@ export default function TodoList({
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => handleToggleComplete(todo?._id!)}
+                  onClick={() => handleToggleComplete(todo?._id!, todo?.status)}
                   className="hover:bg-transparent"
                 >
                   {todo?.status === TodoStatus.DONE && (

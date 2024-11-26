@@ -15,6 +15,7 @@ const {
   TEMP_FILE_UPLOAD_DIRECTORY,
 } = require("./config/fileUpload.config");
 const { sendResponse } = require("./helpers/requestHandler.helper");
+const { APP_FRONT_END_APP_URL } = require("./config/app.config");
 
 const app = express();
 app.disable("x-powered-by");
@@ -23,7 +24,11 @@ app.disable("x-powered-by");
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
-app.use(cors());
+app.use(
+  cors({
+    origin: APP_FRONT_END_APP_URL, // Compliant
+  })
+);
 app.use(morgan("combined", { stream: logger.stream }));
 app.use(
   fileUpload({
