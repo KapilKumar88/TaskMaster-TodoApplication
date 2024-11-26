@@ -26,7 +26,7 @@ export default function AppSidebar() {
             >
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 {/* <GalleryVerticalEnd className="size-4" /> */}
-                <img src="./appLogo.svg" />
+                <img src="./appLogo.svg" alt={appConfig.APP_NAME} />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
