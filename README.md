@@ -1,4 +1,5 @@
-# TaskMaster-TodoApplication (Express, React, Vite, Mongodb, Winston, Nodemailier, Swagger)
+# TaskMaster-TodoApplication 
+### *(Express, React, Vite, Mongodb, Winston, Nodemailer, Swagger)*
 
 ## Project Structure
 
